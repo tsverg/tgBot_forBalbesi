@@ -81,7 +81,11 @@
 //     });
 // }
 // start();
+
+
+
 const fs = require('fs').promises;
+const allfs = require('fs');
 const path = require('path');
 const process = require('process');
 const {authenticate} = require('@google-cloud/local-auth');
@@ -148,26 +152,47 @@ async function authorize() {
   return client;
 }
 
-/**
- * Перечисляет имена и идентификаторы до 10 файлов.
- * @param {OAuth2Client} authClient Авторизованный клиент OAuth2.
- */
-async function listFiles(authClient) {
-  const drive = google.drive({version: 'v3', auth: authClient});
-  const res = await drive.files.list({
-    pageSize: 10,
-    fields: 'nextPageToken, files(id, name)',
-  });
-  const files = res.data.files;
-  if (files.length === 0) {
-    console.log('No files found.');
-    return;
-  }
+// async function listFiles(authClient) {
+//   const drive = google.drive({version: 'v3', auth: authClient});
+//   const res = await drive.files.list({
+//     pageSize: 20,
+//     fields: 'nextPageToken, files(id, name)',
+//   });
+//   const files = res.data.files;
+//   if (files.length === 0) {
+//     console.log('No files found.');
+//     return;
+//   }
 
-  console.log('Files:');
-  files.map((file) => {
-    console.log(`${file.name} (${file.id})`);
-  });
+//   console.log('Files:');
+//   files.map((file) => {
+//     console.log(`${file.name} (${file.id})`);
+//   });
+// }
+// authorize().then(listFiles).catch(console.error);
+
+async function uploadFile(authClient){
+    return new Promise((resolve, rejected) => {
+        const drive = google.drive({version: 'v3', auth: authClient});
+
+        var fileMetaData = {
+            name:"",
+            paternts:["1CaXBZF-e6l8uKsdM2lJrRTJdsc01kXoF"]
+        }
+
+        drive.files.create({
+            resourse:fileMetaData,
+            media:{
+                body: allfs.createReadStream('dsf.txt'),
+                mimeType: 'text/plain'
+            },
+            fields: 'id'
+        }),function(err,file) {
+            if (err) {
+                return rejected(err);
+            }
+            resolve(file);
+        }
+});
 }
-
-authorize().then(listFiles).catch(console.error);
+authorize().then(uploadFile).catch(console.error);
