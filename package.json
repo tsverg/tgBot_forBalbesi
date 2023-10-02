@@ -5,6 +5,9 @@
   },
   "description": "",
   "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
+    "@googleapis/drive": "^8.3.1",
+    "googleapis": "^105.0.0",
     "node-telegram-bot-api": "^0.63.0",
     "nodemon": "^3.0.1"
   }
