@@ -17,12 +17,12 @@ async function listFiles(authClient) {
   console.log('Files:');
   files.map((file) => {
     console.log(`${file.name} (${file.id})`);
-      arrayOfGroups.unshift(file.name);
+    arrayOfGroups.unshift(file.name);
   });
   console.log(arrayOfGroups)
 }
-
+arrayOfGroups = [];
 module.exports = {
-    listFiles,
-}
-module.exports = arrayOfGroups;
+  listFiles,
+  arrayOfGroups,
+};

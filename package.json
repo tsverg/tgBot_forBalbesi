@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "drive": "nodemon ./src/drive.js",
     "dev": "nodemon ./src/index.js",
     "start": "node ./src/index.js"
   },
