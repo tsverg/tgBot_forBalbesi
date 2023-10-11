@@ -1,5 +1,5 @@
 const {authorize} = require('./auth.js');
-let {listFiles} = require("./drive.js");
+let {listGroups, sharedData, listStudents} = require("./drive.js");
 
 const TelegramApi = require('node-telegram-bot-api');
 const token = '6453665454:AAHKiXQLvtUP1PtnFftF40AdYBPJqjUcQDc';
@@ -10,11 +10,10 @@ async function start() {;
         {command: '/start', description: 'Начальное приветствие'},
     ])
 
-    bot.on('message', async msg =>{
+    bot.on('message', async msg => {
         console.log(msg);
         const text = msg.text;
         const chatId = msg.chat.id;
-        
         
         if (text === '/start'){
             await bot.sendSticker(chatId, `https://tlgrm.ru/_/stickers/1bf/558/1bf558c3-9850-46b5-a7ad-9105a634d8d1/192/18.webp`);
@@ -27,30 +26,29 @@ async function start() {;
                 }
             })
         }
-        if (text === "Группа" || text === "группа"){       
-            await authorize().then(listFiles).catch(console.error);
+
+        if (text === "Группа" || text === "группа"){    
+            await authorize().then(listGroups).catch(console.error);
             await bot.sendMessage(chatId,  'Выбери группу в которой ты учишься! 🤓',{
                 reply_markup: {
-                    keyboard: [
-                        arrayOfGroups,
-                    ]
+                    keyboard: sharedData.arrayOfGroups,
                 }
-            })  
-            return arrayOfGroups = [];
+            })
+            arrayOfGroupsCopy = sharedData.arrayOfGroups;
+            return sharedData.arrayOfGroups = [];
         }
-        if (text === "ИСиП-21"){
+        console.log(arrayOfGroupsCopy)
+        if (arrayOfGroupsCopy.some(arr => JSON.stringify(arr) === JSON.stringify([text]))) {
             return bot.sendMessage(chatId, 'теперь выбери себя 😶‍🌫️', {
                 reply_markup: {
                     keyboard: [
-                        ['ИСиП-21',],
-                        
+                        [text],
                     ],
                 }
             })
         }
-        else{ bot.sendMessage(chatId, 'Я не понял вашего сообщения 😞');}
         
-        
+       return bot.sendMessage(chatId, 'Я не понял вашего сообщения 😞')    
     });
 }
 
